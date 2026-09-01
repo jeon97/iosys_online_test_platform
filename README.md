@@ -61,6 +61,7 @@ flowchart LR
 | 담당 기능 | 구현 방식 | 코드 |
 |---|---|---|
 | 시험 진행과 답안 저장 | 상태 전이 검증, 제출 ID 기반 중복 방지 | [ExamSession](samples/exam-workflow/src/main/java/com/portfolio/exam/ExamSession.java) |
+| 결시 상태 확정·취소 | 결시 여부와 현재 확정 상태 검증, 변경 이력 생성 | [ResultStatusService](samples/exam-workflow/src/main/java/com/portfolio/exam/result/ResultStatusService.java) |
 | 검토계획 저장 | 분야·문항 전체 검증 후 한 번에 교체 | [ReviewPlanService](samples/exam-workflow/src/main/java/com/portfolio/exam/review/ReviewPlanService.java) |
 | 선정위원 자동 배정 | 현재 배정 수를 기준으로 균등 분배, 문항 중복 차단 | [ReviewerAssignmentService](samples/exam-workflow/src/main/java/com/portfolio/exam/assignment/ReviewerAssignmentService.java) |
 
@@ -82,6 +83,7 @@ flowchart LR
 - [담당 업무와 기여 내용](docs/CONTRIBUTIONS.md)
 - [구현 상세](docs/IMPLEMENTATION.md)
 - [설계하면서 확인한 점](docs/TECHNICAL-NOTES.md)
+- [기능별 구현 근거](docs/FEATURE-MATRIX.md)
 - [샘플 실행 방법](samples/exam-workflow/README.md)
 
 회사 소스, 고객사명, 운영 데이터와 내부 설정은 포함하지 않았습니다. 샘플 코드는 담당 업무의 핵심 흐름을 설명하기 위해 별도로 작성했습니다.

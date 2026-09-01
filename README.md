@@ -2,81 +2,69 @@
 
 시험 접수 이후 시험장·좌석 배정, 응시, 결과 확인까지의 운영 과정과 문항 출제·검토·선정 과정을 함께 관리하는 웹 플랫폼입니다.
 
-온라인 시험 운영 시스템과 문항 관리 시스템의 유지보수 및 기능 개발에 참여했습니다. 시험 운영 통계, 부정행위 통계, 응시 결과 조회와 문항 출제 계획, 검토 계획, 선정위원 배정 기능을 주로 담당했습니다.
+온라인 시험 운영 시스템과 문항 관리 시스템의 기능 개발에 참여했습니다. 시험 결과·부정행위 통계, 응시 결과 조회, 문항 검토계획, 선정위원 배정 기능을 주로 담당했습니다.
 
-## 프로젝트에서 다룬 문제
-
-시험 운영 데이터는 접수자, 시험 일정, 시험장, 좌석, 응시 결과처럼 서로 연결된 정보가 많습니다. 문항 역시 출제 요청부터 검토, 선정, 실제 시험 사용까지 단계별 이력이 필요합니다.
-
-두 시스템의 역할을 분리하되 시험 계획과 문항 사용 결과가 이어지도록 구성했습니다.
-
-- 시험 운영 시스템: 응시자와 시험 일정, 시험장 배정, 결과 및 통계 관리
-- 문항 관리 시스템: 출제·검토 계획, 위원 배정, 문항 선정, 사용 통계 관리
-
-## 전체 구조
+## 시스템 구성
 
 ```mermaid
 flowchart LR
-    Applicant[응시자]
-    Operator[시험 운영자]
-    Reviewer[출제·검토 위원]
+    Applicant[응시자] --> Test[시험 운영 시스템]
+    Operator[운영자] --> Test
+    Reviewer[출제·검토 위원] --> Pool[문항 관리 시스템]
 
-    OnlineTest[시험 운영 시스템]
-    ItemPool[문항 관리 시스템]
+    Test --> Assignment[시험장·좌석 배정]
+    Test --> Result[응시·결과]
+    Test --> Stats[결과·부정행위 통계]
 
-    Schedule[시험 일정·시험장]
-    Exam[응시·결과]
-    Statistics[운영·부정행위 통계]
-    Authoring[문항 출제]
-    Review[검토·선정]
-    Usage[문항 사용 통계]
-    DB[(RDBMS)]
+    Pool --> Authoring[문항 출제]
+    Pool --> Review[검토계획]
+    Pool --> Selection[문항 선정·위원 배정]
 
-    Applicant --> OnlineTest
-    Operator --> OnlineTest
-    Reviewer --> ItemPool
-
-    OnlineTest --> Schedule
-    OnlineTest --> Exam
-    OnlineTest --> Statistics
-    ItemPool --> Authoring
-    ItemPool --> Review
-    ItemPool --> Usage
-
-    Schedule --> DB
-    Exam --> DB
-    Statistics --> DB
+    Assignment --> DB[(RDBMS)]
+    Result --> DB
+    Stats --> DB
     Authoring --> DB
     Review --> DB
-    Usage --> DB
+    Selection --> DB
 ```
 
-## 담당한 작업
+## 내가 개발한 기능
 
-### 시험 운영과 결과 조회
+### 시험 결과 통계
 
-- 시험계획과 시험실 운영 정보 조회
-- 응시자의 시험 목록 및 결과 확인 기능
-- 시험장·좌석·수험번호 배정 상태 관리
-- 시험 결과 및 부정행위 의심 통계 화면 개발
-- 접수 현황과 자격 확인 통계 자료 구성
-- 엑셀 기반 통계 자료 생성
+시험 정보와 응시자별 결과를 조회하고, 운영자가 결시 상태를 확정하거나 취소하는 기능을 개발했습니다. 화면에서 수정한 결과를 목록 단위로 저장하고 동일 조건으로 엑셀 자료를 생성하도록 구성했습니다.
 
-### 문항 출제와 검토
+### 부정행위 통계
 
-- 출제 계획과 검토 계획 등록·조회
-- 분야별 문항 수와 문항 유형 관리
-- 출제·검토 위원 배정
-- 검토 요청과 첨부파일 관리
-- 문항 선정 현황 및 통계 조회
-- 문항 사용 이력과 사용 통계 관리
+부정행위 의심 건의 유형별 건수와 상세 목록을 분리해 조회했습니다. 운영자가 의심 유형과 내용을 수정한 뒤 판정을 확정하거나 다시 취소할 수 있도록 처리했습니다.
 
-### 공통 관리 기능
+### 응시자 시험 조회
 
-- 관리자, 메뉴, 코드 관리 기능
-- 화면과 서비스 계층의 유효성 검사
-- MyBatis Mapper 쿼리 작성 및 수정
-- 시스템 처리 이력 조회
+로그인 사용자의 자격 종목과 시험 목록을 조회하고 시험별 접수 정보, 응시 결과, 환불 및 추가 서류 요청을 처리했습니다.
+
+### 문항 검토계획
+
+검토계획에 분야, 문항 유형, 대상 문항을 연결했습니다. 기존 구성을 일부만 수정하지 않고 요청 데이터를 검증한 뒤 분야·유형·문항 구성을 한 번에 교체하도록 구현했습니다.
+
+### 선정위원 배정
+
+선정위원에게 문항을 수동·자동·엑셀 방식으로 배정했습니다. 이미 존재하는 배정은 수정하고 신규 배정은 추가했으며, 자동 배정 시 위원별 담당 건수가 한쪽으로 몰리지 않도록 분배했습니다.
+
+### 문항 통계
+
+문항별 사용 이력과 사용 통계를 조회하고 출제·검토·선정 단계에서 사용할 수 있는 관리 화면을 개발했습니다.
+
+## 구현 사례
+
+실제 담당 기능의 처리 방식을 공개 가능한 Java 17 코드로 다시 작성했습니다. 원본 클래스와 쿼리는 사용하지 않았습니다.
+
+| 담당 기능 | 구현 방식 | 코드 |
+|---|---|---|
+| 시험 진행과 답안 저장 | 상태 전이 검증, 제출 ID 기반 중복 방지 | [ExamSession](samples/exam-workflow/src/main/java/com/portfolio/exam/ExamSession.java) |
+| 검토계획 저장 | 분야·문항 전체 검증 후 한 번에 교체 | [ReviewPlanService](samples/exam-workflow/src/main/java/com/portfolio/exam/review/ReviewPlanService.java) |
+| 선정위원 자동 배정 | 현재 배정 수를 기준으로 균등 분배, 문항 중복 차단 | [ReviewerAssignmentService](samples/exam-workflow/src/main/java/com/portfolio/exam/assignment/ReviewerAssignmentService.java) |
+
+처리 순서와 구현 판단은 [구현 상세](docs/IMPLEMENTATION.md)에 정리했습니다.
 
 ## 기술 구성
 
@@ -86,21 +74,15 @@ flowchart LR
 | Data Access | MyBatis | 복합 조회와 통계 쿼리 구성 |
 | Database | Oracle, MariaDB/MySQL 계열 | 시험 운영 및 문항 데이터 저장 |
 | View | JSP, JavaScript | 관리자와 응시자 화면 |
-| Document | Apache POI, JXLS | 통계 및 운영 자료 다운로드 |
+| Document | Apache POI, JXLS | 통계와 배정 자료 처리 |
 | Build | Maven | 의존성 및 배포 산출물 관리 |
 
-## 작업하면서 중요하게 본 부분
+## 관련 문서
 
-- 시험계획, 시험장, 응시자 사이의 연결 관계가 깨지지 않도록 배정 전후 조건을 확인했습니다.
-- 단순 목록과 통계 조회를 분리해 집계 쿼리가 일반 화면의 응답에 영향을 주지 않도록 관리했습니다.
-- 문항은 출제·검토·선정 단계에 따라 수정 가능한 범위가 달라지므로 현재 단계 검증을 서비스 계층에 두었습니다.
-- 운영자가 엑셀 자료와 화면의 수치를 비교할 수 있도록 동일한 조회 조건을 사용했습니다.
-
-상세 담당 내용은 [기여 내역](docs/CONTRIBUTIONS.md), 설계 과정에서 확인한 내용은 [기술 노트](docs/TECHNICAL-NOTES.md)에 정리했습니다.
-
-## 샘플 코드
-
-- [시험 진행 상태 관리 샘플](samples/exam-workflow): 시험 시작, 답안 제출, 종료 과정의 상태 전이와 중복 제출 처리를 Java 17로 재구성했습니다.
+- [담당 업무와 기여 내용](docs/CONTRIBUTIONS.md)
+- [구현 상세](docs/IMPLEMENTATION.md)
+- [설계하면서 확인한 점](docs/TECHNICAL-NOTES.md)
+- [샘플 실행 방법](samples/exam-workflow/README.md)
 
 회사 소스, 고객사명, 운영 데이터와 내부 설정은 포함하지 않았습니다. 샘플 코드는 담당 업무의 핵심 흐름을 설명하기 위해 별도로 작성했습니다.
 

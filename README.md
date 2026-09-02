@@ -85,6 +85,8 @@ flowchart LR
 - [설계하면서 확인한 점](docs/TECHNICAL-NOTES.md)
 - [기능별 구현 근거](docs/FEATURE-MATRIX.md)
 - [샘플 실행 방법](samples/exam-workflow/README.md)
+- [등불쌤 외부 API 설계](docs/EXTERNAL-API.md)
+- [JMeter·Scouter 부하 시험](docs/PERFORMANCE-TEST.md)
 
 회사 소스, 고객사명, 운영 데이터와 내부 설정은 포함하지 않았습니다. 샘플 코드는 담당 업무의 핵심 흐름을 설명하기 위해 별도로 작성했습니다.
 

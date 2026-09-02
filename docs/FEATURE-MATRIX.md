@@ -8,4 +8,5 @@
 | 검토계획 | 분야·유형·대상 문항 구성 | 전체 입력 검증 후 기존 구성을 일괄 교체 | [ReviewPlanService](../samples/exam-workflow/src/main/java/com/portfolio/exam/review/ReviewPlanService.java) |
 | 선정위원 배정 | 수동·자동·엑셀 배정 | 기존 배정 수를 반영해 최소 배정 위원에게 순차 분배 | [ReviewerAssignmentService](../samples/exam-workflow/src/main/java/com/portfolio/exam/assignment/ReviewerAssignmentService.java) |
 | 시험 진행 | 시험 시작·답안 제출·종료 | 상태 전이 검증과 제출 ID 기반 중복 방지 | [ExamSession](../samples/exam-workflow/src/main/java/com/portfolio/exam/ExamSession.java) |
+| 시험 준비 | 시험 데이터 점검, 시험실·좌석·수험번호 배정 | 필수값·정원·중복 검증 후 재배정 이력 저장 | [ExamReadinessService](../samples/exam-workflow/src/main/java/com/portfolio/exam/readiness/ExamReadinessService.java) |
 

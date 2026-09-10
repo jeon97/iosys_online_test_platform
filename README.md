@@ -2,7 +2,20 @@
 
 시험 접수 이후 시험장·좌석 배정, 응시, 결과 확인까지의 운영 과정과 문항 출제·검토·선정 과정을 함께 관리하는 웹 플랫폼입니다.
 
-온라인 시험 운영 시스템과 문항 관리 시스템의 기능 개발에 참여했습니다. 시험 결과·부정행위 통계, 응시 결과 조회, 문항 검토계획, 선정위원 배정 기능을 주로 담당했습니다.
+온라인 시험 운영 시스템과 문항 관리 시스템의 기능 개발에 참여하였습니다. 시험 결과·부정행위 통계, 응시 결과 조회, 문항 검토계획, 선정위원 배정 기능을 주로 담당하였습니다.
+
+## 원본 기반 구현 사례
+
+입력 조건과 처리 순서를 구체적으로 확인할 수 있도록 공개 예제를 확장하였습니다. 각 사례에는 원본 근거, 재작성 범위와 테스트를 연결하였습니다.
+
+| 구현 사례 | 공개 코드 |
+|---|---|
+| 시험 정보·검색 건수·결과 목록 조합 | [ExamStatisticsQuery](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ExamStatisticsQuery.java) |
+| 위원 수에 따른 연속 문항 구간 배정 | [ContiguousReviewerAssignment](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ContiguousReviewerAssignment.java) |
+| 출제계획의 분야·유형·문항을 검토계획으로 이관 | [ReviewPlanMigration](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ReviewPlanMigration.java) |
+| 엑셀 문항번호로 검토 대상 재구성 | [QuestionNumberImport](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/QuestionNumberImport.java) |
+
+[사례별 처리 과정·입출력·테스트](docs/CASE-STUDIES.md) · [원본과 공개 예제의 차이](docs/SOURCE-SCOPE.md) · [검증 결과](docs/VALIDATION.md)
 
 ## 시스템 구성
 
@@ -28,37 +41,37 @@ flowchart LR
     Selection --> DB
 ```
 
-## 내가 개발한 기능
+## 담당 기능
 
 ### 시험 결과 통계
 
-시험 정보와 응시자별 결과를 조회하고, 운영자가 결시 상태를 확정하거나 취소하는 기능을 개발했습니다. 화면에서 수정한 결과를 목록 단위로 저장하고 동일 조건으로 엑셀 자료를 생성하도록 구성했습니다.
+시험 정보와 응시자별 결과를 조회하고, 운영자가 결시 상태를 확정하거나 취소하는 기능을 개발하였습니다. 화면에서 수정한 결과를 목록 단위로 저장하고 동일 조건으로 엑셀 자료를 생성하도록 구성하였습니다.
 
 ### 부정행위 통계
 
-부정행위 의심 건의 유형별 건수와 상세 목록을 분리해 조회했습니다. 운영자가 의심 유형과 내용을 수정한 뒤 판정을 확정하거나 다시 취소할 수 있도록 처리했습니다.
+부정행위 의심 건의 유형별 건수와 상세 목록을 분리해 조회하였습니다. 운영자가 의심 유형과 내용을 수정한 뒤 판정을 확정하거나 다시 취소할 수 있도록 처리하였습니다.
 
 ### 응시자 시험 조회
 
-로그인 사용자의 자격 종목과 시험 목록을 조회하고 시험별 접수 정보, 응시 결과, 환불 및 추가 서류 요청을 처리했습니다.
+로그인 사용자의 자격 종목과 시험 목록을 조회하고 시험별 접수 정보, 응시 결과, 환불 및 추가 서류 요청을 처리하였습니다.
 
 ### 문항 검토계획
 
-검토계획에 분야, 문항 유형, 대상 문항을 연결했습니다. 기존 구성을 일부만 수정하지 않고 요청 데이터를 검증한 뒤 분야·유형·문항 구성을 한 번에 교체하도록 구현했습니다.
+검토계획에 분야, 문항 유형, 대상 문항을 연결하였습니다. 출제계획의 분야·유형·문항을 검토계획으로 이관하고, 엑셀 문항번호의 메타데이터를 조회하여 대상을 다시 구성하였습니다. 원본은 관련 삭제·저장을 트랜잭션으로 처리합니다.
 
 ### 선정위원 배정
 
-선정위원에게 문항을 수동·자동·엑셀 방식으로 배정했습니다. 이미 존재하는 배정은 수정하고 신규 배정은 추가했으며, 자동 배정 시 위원별 담당 건수가 한쪽으로 몰리지 않도록 분배했습니다.
+선정위원에게 문항을 수동·자동·엑셀 방식으로 배정하였습니다. 이미 존재하는 배정은 수정하고 신규 배정은 추가했으며, 자동 배정은 문항 수를 위원 수로 나눈 몫·나머지에 따라 연속 구간으로 분배하였습니다.
 
 ### 문항 통계
 
-문항별 사용 이력과 사용 통계를 조회하고 출제·검토·선정 단계에서 사용할 수 있는 관리 화면을 개발했습니다.
+문항별 사용 이력과 사용 통계를 조회하고 출제·검토·선정 단계에서 사용할 수 있는 관리 화면을 개발하였습니다.
 
-## 구현 사례
+## 기존 공개 예제
 
-실제 담당 기능의 처리 방식을 공개 가능한 Java 17 코드로 다시 작성했습니다. 원본 클래스와 쿼리는 사용하지 않았습니다.
+담당 업무를 설명하는 Java 17 재작성 코드입니다. 아래 표의 검증·상태 전이·멱등성 규칙에는 공개 예제에서 추가한 설계가 포함되어 있습니다. 원본에서 확인한 규칙은 위 사례와 근거 문서에 구분하였습니다.
 
-| 담당 기능 | 구현 방식 | 코드 |
+| 업무 주제 | 공개 예제의 구성 | 코드 |
 |---|---|---|
 | 시험 진행과 답안 저장 | 상태 전이 검증, 제출 ID 기반 중복 방지 | [ExamSession](samples/exam-workflow/src/main/java/com/portfolio/exam/ExamSession.java) |
 | 결시 상태 확정·취소 | 결시 여부와 현재 확정 상태 검증, 변경 이력 생성 | [ResultStatusService](samples/exam-workflow/src/main/java/com/portfolio/exam/result/ResultStatusService.java) |
@@ -66,7 +79,7 @@ flowchart LR
 | 선정위원 자동 배정 | 현재 배정 수를 기준으로 균등 분배, 문항 중복 차단 | [ReviewerAssignmentService](samples/exam-workflow/src/main/java/com/portfolio/exam/assignment/ReviewerAssignmentService.java) |
 | 시험 준비·좌석 배정 | 필수 시험정보·정원·좌석·수험번호 검증, 재배정 이력 | [ExamReadinessService](samples/exam-workflow/src/main/java/com/portfolio/exam/readiness/ExamReadinessService.java) |
 
-처리 순서와 구현 판단은 [구현 상세](docs/IMPLEMENTATION.md)에 정리했습니다.
+처리 순서와 구현 판단은 [구현 상세](docs/IMPLEMENTATION.md)에 정리하였습니다.
 
 ## 기술 구성
 
@@ -90,5 +103,5 @@ flowchart LR
 - [JMeter·Scouter 부하 시험](docs/PERFORMANCE-TEST.md)
 - [시험 준비 점검과 좌석 배정](docs/EXAM-READINESS.md)
 
-회사 소스, 고객사명, 운영 데이터와 내부 설정은 포함하지 않았습니다. 샘플 코드는 담당 업무의 핵심 흐름을 설명하기 위해 별도로 작성했습니다.
+회사 소스, 고객사명, 운영 데이터와 내부 설정은 포함하지 않았습니다. 샘플 코드는 담당 업무의 핵심 흐름을 설명하기 위해 별도로 작성하였습니다.
 

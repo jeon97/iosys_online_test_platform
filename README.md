@@ -1,51 +1,8 @@
-# 온라인 시험 및 문항 관리 플랫폼
+# 온라인 시험·문항 관리 플랫폼
 
-시험 접수 이후 시험장·좌석 배정, 응시, 결과 확인까지의 운영 과정과 문항 출제·검토·선정 과정을 함께 관리하는 웹 플랫폼입니다.
+시험 접수, 시험장·좌석 배정, 응시 결과와 문항 출제·검토·선정을 관리하는 시스템입니다. 시험 결과·부정행위 통계, 응시자 조회, 검토계획, 선정위원 배정과 외부 API를 개발하였습니다.
 
-온라인 시험 운영 시스템과 문항 관리 시스템의 기능 개발에 참여하였습니다. 시험 결과·부정행위 통계, 응시 결과 조회, 문항 검토계획, 선정위원 배정 기능을 주로 담당하였습니다.
-
-## 접수·출력과 접근성 검토
-
-수험표의 응시·면제 표시와 사진·약도 자료를 구성하는 [출력 구현 사례](docs/REPORT-PRESENTATION.md)를 추가하였습니다. AIDT 업무에서 작성한 [접근성·호환성 조사](docs/AIDT-COMPATIBILITY.md)는 실제 화면 테스트 결과와 구분하였습니다.
-
-## 원본 기반 구현 사례
-
-입력 조건과 처리 순서를 구체적으로 확인할 수 있도록 공개 예제를 확장하였습니다. 각 사례에는 원본 근거, 재작성 범위와 테스트를 연결하였습니다.
-
-| 구현 사례 | 공개 코드 |
-|---|---|
-| 시험 정보·검색 건수·결과 목록 조합 | [ExamStatisticsQuery](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ExamStatisticsQuery.java) |
-| 위원 수에 따른 연속 문항 구간 배정 | [ContiguousReviewerAssignment](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ContiguousReviewerAssignment.java) |
-| 출제계획의 분야·유형·문항을 검토계획으로 이관 | [ReviewPlanMigration](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ReviewPlanMigration.java) |
-| 엑셀 문항번호로 검토 대상 재구성 | [QuestionNumberImport](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/QuestionNumberImport.java) |
-
-[사례별 처리 과정·입출력·테스트](docs/CASE-STUDIES.md) · [원본과 공개 예제의 차이](docs/SOURCE-SCOPE.md) · [검증 결과](docs/VALIDATION.md)
-
-## 시스템 구성
-
-```mermaid
-flowchart LR
-    Applicant[응시자] --> Test[시험 운영 시스템]
-    Operator[운영자] --> Test
-    Reviewer[출제·검토 위원] --> Pool[문항 관리 시스템]
-
-    Test --> Assignment[시험장·좌석 배정]
-    Test --> Result[응시·결과]
-    Test --> Stats[결과·부정행위 통계]
-
-    Pool --> Authoring[문항 출제]
-    Pool --> Review[검토계획]
-    Pool --> Selection[문항 선정·위원 배정]
-
-    Assignment --> DB[(RDBMS)]
-    Result --> DB
-    Stats --> DB
-    Authoring --> DB
-    Review --> DB
-    Selection --> DB
-```
-
-## 담당 기능
+## 담당 업무와 구현
 
 ### 시험 결과 통계
 
@@ -61,7 +18,7 @@ flowchart LR
 
 ### 문항 검토계획
 
-검토계획에 분야, 문항 유형, 대상 문항을 연결하였습니다. 출제계획의 분야·유형·문항을 검토계획으로 이관하고, 엑셀 문항번호의 메타데이터를 조회하여 대상을 다시 구성하였습니다. 원본은 관련 삭제·저장을 트랜잭션으로 처리합니다.
+검토계획에 분야, 문항 유형, 대상 문항을 연결하였습니다. 출제계획의 분야·유형·문항을 검토계획으로 이관하고, 엑셀 문항번호의 메타데이터를 조회하여 대상을 다시 구성하였습니다. 관련 데이터의 삭제와 저장은 트랜잭션으로 처리하였습니다.
 
 ### 선정위원 배정
 
@@ -70,20 +27,6 @@ flowchart LR
 ### 문항 통계
 
 문항별 사용 이력과 사용 통계를 조회하고 출제·검토·선정 단계에서 사용할 수 있는 관리 화면을 개발하였습니다.
-
-## 기존 공개 예제
-
-담당 업무를 설명하는 Java 17 재작성 코드입니다. 아래 표의 검증·상태 전이·멱등성 규칙에는 공개 예제에서 추가한 설계가 포함되어 있습니다. 원본에서 확인한 규칙은 위 사례와 근거 문서에 구분하였습니다.
-
-| 업무 주제 | 공개 예제의 구성 | 코드 |
-|---|---|---|
-| 시험 진행과 답안 저장 | 상태 전이 검증, 제출 ID 기반 중복 방지 | [ExamSession](samples/exam-workflow/src/main/java/com/portfolio/exam/ExamSession.java) |
-| 결시 상태 확정·취소 | 결시 여부와 현재 확정 상태 검증, 변경 이력 생성 | [ResultStatusService](samples/exam-workflow/src/main/java/com/portfolio/exam/result/ResultStatusService.java) |
-| 검토계획 저장 | 분야·문항 전체 검증 후 한 번에 교체 | [ReviewPlanService](samples/exam-workflow/src/main/java/com/portfolio/exam/review/ReviewPlanService.java) |
-| 선정위원 자동 배정 | 현재 배정 수를 기준으로 균등 분배, 문항 중복 차단 | [ReviewerAssignmentService](samples/exam-workflow/src/main/java/com/portfolio/exam/assignment/ReviewerAssignmentService.java) |
-| 시험 준비·좌석 배정 | 필수 시험정보·정원·좌석·수험번호 검증, 재배정 이력 | [ExamReadinessService](samples/exam-workflow/src/main/java/com/portfolio/exam/readiness/ExamReadinessService.java) |
-
-처리 순서와 구현 판단은 [구현 상세](docs/IMPLEMENTATION.md)에 정리하였습니다.
 
 ## 기술 구성
 
@@ -96,16 +39,27 @@ flowchart LR
 | Document | Apache POI, JXLS | 통계와 배정 자료 처리 |
 | Build | Maven | 의존성 및 배포 산출물 관리 |
 
-## 관련 문서
+## 구현 사례
 
-- [담당 업무와 기여 내용](docs/CONTRIBUTIONS.md)
-- [구현 상세](docs/IMPLEMENTATION.md)
-- [설계하면서 확인한 점](docs/TECHNICAL-NOTES.md)
-- [기능별 구현 근거](docs/FEATURE-MATRIX.md)
-- [샘플 실행 방법](samples/exam-workflow/README.md)
-- [등불쌤 외부 API 설계](docs/EXTERNAL-API.md)
-- [JMeter·Scouter 부하 시험](docs/PERFORMANCE-TEST.md)
-- [시험 준비 점검과 좌석 배정](docs/EXAM-READINESS.md)
+| 구현 사례 | 공개 코드 |
+|---|---|
+| 시험 정보·검색 건수·결과 목록 조합 | [ExamStatisticsQuery](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ExamStatisticsQuery.java) |
+| 위원 수에 따른 연속 문항 구간 배정 | [ContiguousReviewerAssignment](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ContiguousReviewerAssignment.java) |
+| 출제계획의 분야·유형·문항을 검토계획으로 이관 | [ReviewPlanMigration](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/ReviewPlanMigration.java) |
+| 엑셀 문항번호로 검토 대상 재구성 | [QuestionNumberImport](samples/exam-workflow/src/main/java/com/portfolio/exam/cases/QuestionNumberImport.java) |
 
-회사 소스, 고객사명, 운영 데이터와 내부 설정은 포함하지 않았습니다. 샘플 코드는 담당 업무의 핵심 흐름을 설명하기 위해 별도로 작성하였습니다.
+[외부 API](docs/EXTERNAL-API.md) · [수험표 출력](docs/REPORT-PRESENTATION.md) · [시험 준비·좌석 배정](docs/EXAM-READINESS.md) · [ClassRoom 부하 시험](docs/PERFORMANCE-TEST.md) · [AIDT 접근성 검토](docs/AIDT-COMPATIBILITY.md)
 
+## 코드 예제
+
+업무 처리 흐름을 별도로 작성한 예제입니다. 회사 운영 코드와 데이터는 포함하지 않습니다. 예제의 구성과 추가 규칙은 [예제 안내](docs/SAMPLE-NOTES.md)에 있습니다.
+
+| 업무 주제 | 공개 예제의 구성 | 코드 |
+|---|---|---|
+| 시험 진행과 답안 저장 | 상태 전이 검증, 제출 ID 기반 중복 방지 | [ExamSession](samples/exam-workflow/src/main/java/com/portfolio/exam/ExamSession.java) |
+| 결시 상태 확정·취소 | 결시 여부와 현재 확정 상태 검증, 변경 이력 생성 | [ResultStatusService](samples/exam-workflow/src/main/java/com/portfolio/exam/result/ResultStatusService.java) |
+| 검토계획 저장 | 분야·문항 전체 검증 후 한 번에 교체 | [ReviewPlanService](samples/exam-workflow/src/main/java/com/portfolio/exam/review/ReviewPlanService.java) |
+| 선정위원 자동 배정 | 현재 배정 수를 기준으로 균등 분배, 문항 중복 차단 | [ReviewerAssignmentService](samples/exam-workflow/src/main/java/com/portfolio/exam/assignment/ReviewerAssignmentService.java) |
+| 시험 준비·좌석 배정 | 필수 시험정보·정원·좌석·수험번호 검증, 재배정 이력 | [ExamReadinessService](samples/exam-workflow/src/main/java/com/portfolio/exam/readiness/ExamReadinessService.java) |
+
+[담당 업무](docs/CONTRIBUTIONS.md) · [구현 상세](docs/CASE-STUDIES.md) · [코드 목록](docs/FEATURE-MATRIX.md) · [예제 실행·테스트](docs/VALIDATION.md)
